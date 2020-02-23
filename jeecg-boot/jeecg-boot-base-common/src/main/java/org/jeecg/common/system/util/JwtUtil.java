@@ -64,19 +64,48 @@ public class JwtUtil {
 	}
 
 	/**
+	 * AK48 SaaS
+	 * 获得token中的信息无需secret解密也能获得
+	 * @return token中包含的租户id
+	 */
+	public static String getTenancyId(String token) {
+		try {
+			DecodedJWT jwt = JWT.decode(token);
+			return jwt.getClaim("tenancyId").asString();
+		} catch (JWTDecodeException e) {
+			return null;
+		}
+	}
+
+	/**
 	 * 生成签名,5min后过期
 	 *
 	 * @param username 用户名
 	 * @param secret   用户的密码
+	 * @param tenancyId 租户ID
 	 * @return 加密的token
 	 */
-	public static String sign(String username, String secret) {
+	public static String sign(String username, String secret, String tenancyId) {
+		Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+		Algorithm algorithm = Algorithm.HMAC256(secret);
+		// 附带username信息
+		// 附带租户信息
+		return JWT.create().withClaim("username", username).withClaim("tenancyId", tenancyId).withExpiresAt(date).sign(algorithm);
+	}
+
+	/**
+	 * 生成签名,5min后过期
+	 * @param username 用户名
+	 * @param secret   用户的密码
+	 * @return 加密的token
+	 */
+	/*public static String sign(String username, String secret) {
 		Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
 		Algorithm algorithm = Algorithm.HMAC256(secret);
 		// 附带username信息
 		return JWT.create().withClaim("username", username).withExpiresAt(date).sign(algorithm);
 
-	}
+	}*/
 
 	/**
 	 * 根据request中的token获取用户账号
@@ -92,6 +121,23 @@ public class JwtUtil {
 			throw new JeecgBootException("未获取到用户");
 		}
 		return username;
+	}
+
+	/**
+	 * AK48 SaaS
+	 * 根据request中的token获取租户id
+	 *
+	 * @param request
+	 * @return
+	 * @throws JeecgBootException
+	 */
+	public static String getTenancyIdByToken(HttpServletRequest request) throws JeecgBootException {
+		String accessToken = request.getHeader("X-Access-Token");
+		String tenancyId = getTenancyId(accessToken);
+		if (oConvertUtils.isEmpty(tenancyId)) {
+			throw new JeecgBootException("未获取到SaaS租户ID");
+		}
+		return tenancyId;
 	}
 	
 	/**

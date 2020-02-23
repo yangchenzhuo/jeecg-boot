@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
+import sun.rmi.runtime.Log;
 
 /**
  * @Description: 用户登录鉴权和获取用户授权
@@ -125,7 +126,7 @@ public class ShiroRealm extends AuthorizingRealm {
             throw new AuthenticationException("账号已被锁定,请联系管理员!");
         }
 		// 校验token是否超时失效 & 或者账号密码是否错误
-		if (!jwtTokenRefresh(token, username, loginUser.getPassword())) {
+		if (!jwtTokenRefresh(token, username, loginUser.getPassword(), loginUser.getTenancyId())) {
 			throw new AuthenticationException("Token失效，请重新登录!");
 		}
 
@@ -145,12 +146,13 @@ public class ShiroRealm extends AuthorizingRealm {
 	 * @param passWord
 	 * @return
 	 */
-	public boolean jwtTokenRefresh(String token, String userName, String passWord) {
+	public boolean jwtTokenRefresh(String token, String userName, String passWord, String tenancyId) {
+
 		String cacheToken = String.valueOf(redisUtil.get(CommonConstant.PREFIX_USER_TOKEN + token));
 		if (oConvertUtils.isNotEmpty(cacheToken)) {
 			// 校验token有效性
 			if (!JwtUtil.verify(cacheToken, userName, passWord)) {
-				String newAuthorization = JwtUtil.sign(userName, passWord);
+				String newAuthorization = JwtUtil.sign(userName, passWord, tenancyId);
 				// 设置超时时间
 				redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, newAuthorization);
 				redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME *2 / 1000);

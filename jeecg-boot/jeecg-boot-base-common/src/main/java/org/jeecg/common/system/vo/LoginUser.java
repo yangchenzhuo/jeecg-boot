@@ -90,4 +90,10 @@ public class LoginUser {
 	 */
 	private Date createTime;
 
+
+	/**
+	 * 租户ID
+	 */
+	private String tenancyId;
+
 }

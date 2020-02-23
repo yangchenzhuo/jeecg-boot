@@ -323,8 +323,11 @@ public class LoginController {
 	private Result<JSONObject> userInfo(SysUser sysUser, Result<JSONObject> result) {
 		String syspassword = sysUser.getPassword();
 		String username = sysUser.getUsername();
+		// add  SaaS Start
+		String tenancyId = sysUser.getTenancyId();
+		// add  SaaS End
 		// 生成token
-		String token = JwtUtil.sign(username, syspassword);
+		String token = JwtUtil.sign(username, syspassword, sysUser.getTenancyId());
         // 设置token缓存有效时间
 		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
 		redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME*2 / 1000);
@@ -427,9 +430,10 @@ public class LoginController {
 		JSONObject obj = new JSONObject();
 		//用户登录信息
 		obj.put("userInfo", sysUser);
-		
+
 		// 生成token
-		String token = JwtUtil.sign(username, syspassword);
+		//add SaaS Start
+		String token = JwtUtil.sign(username, syspassword, sysUser.getTenancyId());
 		// 设置超时时间
 		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
 		redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME*2 / 1000);
