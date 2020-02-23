@@ -18,7 +18,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
  */
 @Data
 @TableName("sys_user_agent")
-public class SysUserAgent implements Serializable {
+public class SysUserAgent extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**序号*/

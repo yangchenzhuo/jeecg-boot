@@ -22,7 +22,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysPermission implements Serializable {
+public class SysPermission extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 @Data
 @TableName("sys_depart")
-public class SysDepart implements Serializable {
+public class SysDepart extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**ID*/

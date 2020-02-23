@@ -24,7 +24,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysDictItem implements Serializable {
+public class SysDictItem extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

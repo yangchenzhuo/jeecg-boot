@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class SysPermissionDataRule implements Serializable {
+public class SysPermissionDataRule extends BaseEntity implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	

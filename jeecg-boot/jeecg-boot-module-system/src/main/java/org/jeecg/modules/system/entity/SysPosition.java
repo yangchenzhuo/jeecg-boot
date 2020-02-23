@@ -24,7 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(value = "sys_position对象", description = "职务表")
-public class SysPosition {
+public class SysPosition extends BaseEntity {
 
     /**
      * id

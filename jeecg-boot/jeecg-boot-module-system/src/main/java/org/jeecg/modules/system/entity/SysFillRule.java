@@ -23,7 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(value = "sys_fill_rule对象", description = "填值规则")
-public class SysFillRule {
+public class SysFillRule extends BaseEntity {
 
     /**
      * 主键ID

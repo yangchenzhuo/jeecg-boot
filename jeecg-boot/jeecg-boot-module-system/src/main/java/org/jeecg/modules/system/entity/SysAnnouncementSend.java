@@ -17,7 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
  */
 @Data
 @TableName("sys_announcement_send")
-public class SysAnnouncementSend implements Serializable {
+public class SysAnnouncementSend extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**id*/

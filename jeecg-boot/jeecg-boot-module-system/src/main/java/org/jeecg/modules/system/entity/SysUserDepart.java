@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 @Data
 @TableName("sys_user_depart")
-public class SysUserDepart implements Serializable {
+public class SysUserDepart extends BaseEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	/**主键id*/

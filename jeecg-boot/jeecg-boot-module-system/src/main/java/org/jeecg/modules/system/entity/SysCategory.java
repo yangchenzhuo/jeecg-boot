@@ -20,7 +20,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_category")
-public class SysCategory implements Serializable {
+public class SysCategory extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
     
 	/**主键*/
