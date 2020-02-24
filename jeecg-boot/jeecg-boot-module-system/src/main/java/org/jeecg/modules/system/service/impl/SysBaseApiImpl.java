@@ -111,6 +111,32 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 	}
 
 	@Override
+	public void addLoginLog(String userName, String tenancyId) {
+		SysLog sysLog = new SysLog();
+		//注解上的描述,操作日志内容
+		sysLog.setLogContent("租户id：" + tenancyId + ";用户：" + userName + "登录成功" );
+		sysLog.setLogType(CommonConstant.LOG_TYPE_1);
+		sysLog.setOperateType(null);
+
+		//请求的方法名
+		//请求的参数
+
+		try {
+			//获取request
+			HttpServletRequest request = SpringContextUtils.getHttpServletRequest();
+			//设置IP地址
+			sysLog.setIp(IPUtils.getIpAddr(request));
+		} catch (Exception e) {
+			sysLog.setIp("127.0.0.1");
+		}
+		//设置租户id
+		sysLog.setTenancyId(tenancyId);
+		sysLog.setCreateTime(new Date());
+		//保存系统日志
+		sysLogMapper.insert(sysLog);
+	}
+
+	@Override
 	@Cacheable(cacheNames=CacheConstant.SYS_USERS_CACHE, key="#username")
 	public LoginUser getUserByName(String username) {
 		if(oConvertUtils.isEmpty(username)) {

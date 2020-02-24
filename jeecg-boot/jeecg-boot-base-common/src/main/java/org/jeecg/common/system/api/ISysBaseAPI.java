@@ -24,6 +24,16 @@ public interface ISysBaseAPI {
 	 * @param operatetype 操作类型(1:添加;2:修改;3:删除;)
 	 */
 	void addLog(String LogContent, Integer logType, Integer operatetype);
+
+
+	/**
+	 * 新增用户登录日志
+	 * @param userName
+	 * @param tenancyId
+	 */
+	void addLoginLog(String userName, String tenancyId);
+
+
 	
 	/**
 	  * 根据用户账号查询用户信息

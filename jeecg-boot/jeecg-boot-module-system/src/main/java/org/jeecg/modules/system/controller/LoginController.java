@@ -89,11 +89,11 @@ public class LoginController {
 			result.error500("用户名或密码错误");
 			return result;
 		}
-				
 		//用户登录信息
 		userInfo(sysUser, result);
-		sysBaseAPI.addLog("用户名: " + username + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
-
+		// 变更：用户登录日志, 记录多租户下多用户登录日志
+		//sysBaseAPI.addLog("用户名: " + username + ",登录成功！", CommonConstant.LOG_TYPE_1, null);
+		sysBaseAPI.addLoginLog(sysUser.getUsername(), sysUser.getTenancyId());
 		return result;
 	}
 	
