@@ -102,7 +102,8 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 		if(sysUser!=null){
 			sysLog.setUserid(sysUser.getUsername());
 			sysLog.setUsername(sysUser.getRealname());
-
+			//绑定租户信息
+			sysLog.setTenancyId(sysUser.getTenancyId());
 		}
 		sysLog.setCreateTime(new Date());
 		//保存系统日志

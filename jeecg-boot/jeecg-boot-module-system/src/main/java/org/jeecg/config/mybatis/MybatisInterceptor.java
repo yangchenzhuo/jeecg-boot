@@ -88,6 +88,20 @@ public class MybatisInterceptor implements Interceptor {
 							}
 						}
 					}
+					//注入租户ID
+					if ("tenancyId".equals(field.getName())) {
+						field.setAccessible(true);
+						Object tenancyIdCode = field.get(parameter);
+						field.setAccessible(false);
+						if (tenancyIdCode == null || tenancyIdCode.equals("")) {
+							// 获取登录用户信息
+							if (sysUser != null) {
+								field.setAccessible(true);
+								field.set(parameter, sysUser.getTenancyId());
+								field.setAccessible(false);
+							}
+						}
+					}
 				} catch (Exception e) {
 				}
 			}
