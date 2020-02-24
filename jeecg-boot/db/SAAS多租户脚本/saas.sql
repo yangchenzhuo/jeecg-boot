@@ -113,3 +113,29 @@ ALTER TABLE `jeecg-boot`.`sys_user_depart` ADD INDEX `index_sys_user_depart_tena
 -- ----------------------------
 ALTER TABLE `sys_user_role` ADD `tenancy_id` VARCHAR(128) NOT NULL COMMENT '租户id';
 ALTER TABLE `jeecg-boot`.`sys_user_role` ADD INDEX `index_sys_user_role_tenancy_id` (`tenancy_id`) USING BTREE;
+-- ----------------------------
+-- Table sys_data_log
+-- 新增 tenancyId 租户字段 & 创建索引
+-- ----------------------------
+ALTER TABLE `sys_data_log` ADD `tenancy_id` VARCHAR(128) NOT NULL COMMENT '租户id';
+ALTER TABLE `jeecg-boot`.`sys_data_log` ADD INDEX `index_sys_data_log_tenancy_id` (`tenancy_id`) USING BTREE;
+-- ----------------------------
+-- Table sys_log
+-- 新增 tenancyId 租户字段 & 创建索引
+-- ----------------------------
+ALTER TABLE `sys_log` ADD `tenancy_id` VARCHAR(128) NOT NULL COMMENT '租户id';
+ALTER TABLE `jeecg-boot`.`sys_log` ADD INDEX `index_sys_log_tenancy_id` (`tenancy_id`) USING BTREE;
+-- ----------------------------
+-- Table 创建租户表
+-- ----------------------------
+CREATE TABLE `sys_tenancy_info` (
+  `id` varchar(36) NOT NULL,
+  `tenancy_name` varchar(128) NOT NULL COMMENT '租户名称',
+  `tenancy_info` longtext COMMENT '租户信息',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建日期',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新人',
+  `update_time` datetime DEFAULT NULL COMMENT '更新日期',
+  PRIMARY KEY (`id`),
+  KEY `sys_tenancy_name` (`tenancy_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
