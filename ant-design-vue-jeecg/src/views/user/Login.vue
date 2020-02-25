@@ -45,7 +45,7 @@
               <j-graphic-code @success="generateCode" ref="jgraphicCodeRef" style="float: right" remote></j-graphic-code>
             </a-col>
           </a-row>
-
+  
 
         </a-tab-pane>
         <a-tab-pane key="tab2" tab="手机号登陆">
@@ -260,7 +260,8 @@
               let checkParams = this.$refs.jgraphicCodeRef.getLoginParam()
               loginParams.captcha = checkParams.checkCode
               loginParams.checkKey = checkParams.checkKey
-
+              //获取用户的域名
+              loginParams.domain = window.location.hostname
               that.Login(loginParams).then((res) => {
                 this.departConfirm(res)
               }).catch((err) => {

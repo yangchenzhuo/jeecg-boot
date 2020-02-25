@@ -19,6 +19,8 @@ public class SysLoginModel {
     private String captcha;
 	@ApiModelProperty(value = "验证码key")
     private String checkKey;
+    @ApiModelProperty(value = "域名")
+    private String domain;
 
     public String getUsername() {
         return username;
@@ -51,5 +53,12 @@ public class SysLoginModel {
 	public void setCheckKey(String checkKey) {
 		this.checkKey = checkKey;
 	}
-    
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 }

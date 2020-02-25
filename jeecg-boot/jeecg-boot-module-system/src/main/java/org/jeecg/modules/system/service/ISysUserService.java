@@ -58,6 +58,14 @@ public interface ISysUserService extends IService<SysUser> {
 	public boolean deleteBatchUsers(String userIds);
 	
 	public SysUser getUserByName(String username);
+
+	/**
+	 * 按照用户名+域名 获取用户信息
+	 * @param username
+	 * @param domain
+	 * @return
+	 */
+	public SysUser getUserByNameAndDomain(String username, String domain);
 	
 	/**
 	 * 添加用户和用户角色关系

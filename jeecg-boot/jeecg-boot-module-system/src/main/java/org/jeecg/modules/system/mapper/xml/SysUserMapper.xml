@@ -7,6 +7,11 @@
 		select * from  sys_user  where username = #{username} and del_flag = '0'
 	</select>
 
+	<!-- 根据用户名 + 域名 查询 -->
+	<select id="getUserByNameAndDomain" resultType="org.jeecg.modules.system.entity.SysUser">
+		select sys_user.* from  sys_user  INNER JOIN sys_tenancy_info ON sys_tenancy_info.id = sys_user.tenancy_id  AND sys_user.username = #{username} and sys_user.del_flag = '0' and sys_tenancy_info.domain = #{domain}
+	</select>
+
 	<!-- 根据部门Id查询 -->
 	<select id="getUserByDepId" resultType="org.jeecg.modules.system.entity.SysUser">
 		select * from sys_user where del_flag = '0' and id in (select user_id from sys_user_depart where dep_id=#{departId})
