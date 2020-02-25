@@ -131,16 +131,15 @@ ALTER TABLE `jeecg-boot`.`sys_log` ADD INDEX `index_sys_log_tenancy_id` (`tenanc
 -- ----------------------------
 CREATE TABLE `sys_tenancy_info` (
   `id` varchar(36) NOT NULL,
-  `domain` varchar(255) DEFAULT NULL COMMENT '域名',
-  `tenancy_name` varchar(128) DEFAULT NULL COMMENT '租户名称',
-  `tenancy_info` longtext COMMENT '租户信息',
-  `expire` datetime DEFAULT NULL COMMENT '有效期',
-  `user_limit` int(255) DEFAULT '0' COMMENT '用户上限',
-  `status` tinyint(1) DEFAULT '0' COMMENT '是否激活',
   `create_by` varchar(50) DEFAULT NULL COMMENT '创建人',
   `create_time` datetime DEFAULT NULL COMMENT '创建日期',
   `update_by` varchar(50) DEFAULT NULL COMMENT '更新人',
   `update_time` datetime DEFAULT NULL COMMENT '更新日期',
-  PRIMARY KEY (`id`),
-  KEY `sys_tenancy_name` (`tenancy_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
+  `domain` varchar(128) DEFAULT NULL COMMENT '域名',
+  `tenancy_name` varchar(32) DEFAULT NULL COMMENT '租户简称',
+  `tenancy_info` longtext COMMENT '租户详情',
+  `user_limit` int(11) DEFAULT NULL COMMENT '用户上限',
+  `expire` datetime DEFAULT NULL COMMENT '过期时间',
+  `tenancy_type` varchar(32) DEFAULT NULL COMMENT '租户类型',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
