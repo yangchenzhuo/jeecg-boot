@@ -10,3 +10,7 @@
 **/*.lock
 ant-design-vue-jeecg/yarn.lock
 ant-design-vue-jeecg/yarn.lock
+ant-design-vue-jeecg/package-lock.json
+.DS_Store
+ant-design-vue-jeecg/yarn.lock
+*.lock
