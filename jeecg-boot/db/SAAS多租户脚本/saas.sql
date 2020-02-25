@@ -126,16 +126,20 @@ ALTER TABLE `jeecg-boot`.`sys_data_log` ADD INDEX `index_sys_data_log_tenancy_id
 ALTER TABLE `sys_log` ADD `tenancy_id` VARCHAR(128) NOT NULL COMMENT '租户id';
 ALTER TABLE `jeecg-boot`.`sys_log` ADD INDEX `index_sys_log_tenancy_id` (`tenancy_id`) USING BTREE;
 -- ----------------------------
--- Table 创建租户表
+-- Table 创建租户表 sys_tenancy_info
 -- ----------------------------
 CREATE TABLE `sys_tenancy_info` (
   `id` varchar(36) NOT NULL,
-  `tenancy_name` varchar(128) NOT NULL COMMENT '租户名称',
+  `domain` varchar(255) DEFAULT NULL COMMENT '域名',
+  `tenancy_name` varchar(128) DEFAULT NULL COMMENT '租户名称',
   `tenancy_info` longtext COMMENT '租户信息',
+  `expire` datetime DEFAULT NULL COMMENT '有效期',
+  `user_limit` int(255) DEFAULT '0' COMMENT '用户上限',
+  `status` tinyint(1) DEFAULT '0' COMMENT '是否激活',
   `create_by` varchar(50) DEFAULT NULL COMMENT '创建人',
   `create_time` datetime DEFAULT NULL COMMENT '创建日期',
   `update_by` varchar(50) DEFAULT NULL COMMENT '更新人',
   `update_time` datetime DEFAULT NULL COMMENT '更新日期',
   PRIMARY KEY (`id`),
   KEY `sys_tenancy_name` (`tenancy_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='租户表';
