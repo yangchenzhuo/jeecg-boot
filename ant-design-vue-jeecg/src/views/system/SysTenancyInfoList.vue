@@ -1,21 +1,33 @@
 <template>
   <a-card :bordered="false">
-
     <!-- 查询区域 -->
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-
           <a-col :md="6" :sm="8">
-            <a-form-item label="租户名称">
-              <a-input placeholder="请输入租户名称" v-model="queryParam.tenancyName"></a-input>
+            <a-form-item label="域名">
+              <a-input placeholder="请输入域名" v-model="queryParam.domain"></a-input>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="8">
-            <a-form-item label="租户信息">
-              <a-input placeholder="请输入租户信息" v-model="queryParam.tenancyInfo"></a-input>
+            <a-form-item label="租户简称">
+              <a-input placeholder="请输入租户简称" v-model="queryParam.tenancyName"></a-input>
             </a-form-item>
           </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :md="12" :sm="16">
+              <a-form-item label="过期时间">
+                <j-date placeholder="请选择开始日期" class="query-group-cust" v-model="queryParam.expire_begin"></j-date>
+                <span class="query-group-split-cust"></span>
+                <j-date placeholder="请选择结束日期" class="query-group-cust" v-model="queryParam.expire_end"></j-date>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="8">
+              <a-form-item label="租户类型">
+                <j-dict-select-tag placeholder="请选择租户类型" v-model="queryParam.tenancyType" dictCode="tenancy_type"/>
+              </a-form-item>
+            </a-col>
+          </template>
           <a-col :md="6" :sm="8" >
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -30,11 +42,12 @@
         </a-row>
       </a-form>
     </div>
-
+    <!-- 查询区域-END -->
+    
     <!-- 操作按钮区域 -->
     <div class="table-operator">
       <a-button @click="handleAdd" type="primary" icon="plus">新增</a-button>
-      <a-button type="primary" icon="download" @click="handleExportXls('Sys Tenancy Info')">导出</a-button>
+      <a-button type="primary" icon="download" @click="handleExportXls('系统租户表')">导出</a-button>
       <a-upload name="file" :showUploadList="false" :multiple="false" :headers="tokenHeader" :action="importExcelUrl" @change="handleImportExcel">
         <a-button type="primary" icon="import">导入</a-button>
       </a-upload>
@@ -62,8 +75,29 @@
         :dataSource="dataSource"
         :pagination="ipagination"
         :loading="loading"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        :rowSelection="{fixed:true,selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
+        
         @change="handleTableChange">
+
+        <template slot="htmlSlot" slot-scope="text">
+          <div v-html="text"></div>
+        </template>
+        <template slot="imgSlot" slot-scope="text">
+          <span v-if="!text" style="font-size: 12px;font-style: italic;">无此图片</span>
+          <img v-else :src="getImgView(text)" height="25px" alt="图片不存在" style="max-width:80px;font-size: 12px;font-style: italic;"/>
+        </template>
+        <template slot="fileSlot" slot-scope="text">
+          <span v-if="!text" style="font-size: 12px;font-style: italic;">无此文件</span>
+          <a-button
+            v-else
+            :ghost="true"
+            type="primary"
+            icon="download"
+            size="small"
+            @click="uploadFile(text)">
+            下载
+          </a-button>
+        </template>
 
         <span slot="action" slot-scope="text, record">
           <a @click="handleEdit(record)">编辑</a>
@@ -72,6 +106,11 @@
           <a-dropdown>
             <a class="ant-dropdown-link">更多 <a-icon type="down" /></a>
             <a-menu slot="overlay">
+              <a-menu-item>
+                <a-popconfirm title="是否创建租户管理员?" @confirm="() => console.log(record.id)">
+                  <a>创建租户管理员</a>
+                </a-popconfirm>
+              </a-menu-item>
               <a-menu-item>
                 <a-popconfirm title="确定删除吗?" @confirm="() => handleDelete(record.id)">
                   <a>删除</a>
@@ -83,26 +122,30 @@
 
       </a-table>
     </div>
-    <!-- table区域-end -->
 
-    <!-- 表单区域 -->
     <sysTenancyInfo-modal ref="modalForm" @ok="modalFormOk"></sysTenancyInfo-modal>
   </a-card>
 </template>
 
 <script>
-  import SysTenancyInfoModal from './modules/SysTenancyInfoModal'
+
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
+  import SysTenancyInfoModal from './modules/SysTenancyInfoModal'
+  import JDictSelectTag from '@/components/dict/JDictSelectTag.vue'
+  import JDate from '@/components/jeecg/JDate.vue'
+  import {initDictOptions, filterMultiDictText} from '@/components/dict/JDictSelectUtil'
 
   export default {
     name: "SysTenancyInfoList",
     mixins:[JeecgListMixin],
     components: {
+      JDictSelectTag,
+      JDate,
       SysTenancyInfoModal
     },
     data () {
       return {
-        description: 'Sys Tenancy Info管理页面',
+        description: '系统租户表管理页面',
         // 表头
         columns: [
           {
@@ -114,40 +157,80 @@
             customRender:function (t,r,index) {
               return parseInt(index)+1;
             }
-           },
-       {
-            title: '租户名称',
+          },
+          {
+            title:'域名',
+            align:"center",
+            dataIndex: 'domain'
+          },
+          {
+            title:'租户简称',
             align:"center",
             dataIndex: 'tenancyName'
-           },
-       {
-            title: '租户信息',
+          },
+          {
+            title:'租户详情',
             align:"center",
             dataIndex: 'tenancyInfo'
-           },
+          },
+          {
+            title:'用户上限',
+            align:"center",
+            dataIndex: 'userLimit'
+          },
+          {
+            title:'过期时间',
+            align:"center",
+            dataIndex: 'expire',
+            customRender:function (text) {
+              return !text?"":(text.length>10?text.substr(0,10):text)
+            }
+          },
+          {
+            title:'租户类型',
+            align:"center",
+            dataIndex: 'tenancyType',
+            customRender:(text)=>{
+              if(!text){
+                return ''
+              }else{
+                return filterMultiDictText(this.dictOptions['tenancyType'], text+"")
+              }
+            }
+          },
           {
             title: '操作',
             dataIndex: 'action',
             align:"center",
-            scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' }
           }
         ],
-    url: {
-          list: "/sys/tenancy/list",
-          delete: "/sys/tenancy//delete",
-          deleteBatch: "/sys/tenancy/deleteBatch",
-          exportXlsUrl: "/sys/tenancy/exportXls",
-          importExcelUrl: "/sys/tenancy/importExcel",
-       },
-    }
-  },
-  computed: {
-    importExcelUrl: function(){
-      return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
-    }
-  },
+        url: {
+          list: "/system/sysTenancyInfo/list",
+          delete: "/system/sysTenancyInfo/delete",
+          deleteBatch: "/system/sysTenancyInfo/deleteBatch",
+          exportXlsUrl: "/system/sysTenancyInfo/exportXls",
+          importExcelUrl: "system/sysTenancyInfo/importExcel",
+        },
+        dictOptions:{
+         tenancyType:[],
+        },
+      }
+    },
+    computed: {
+      importExcelUrl: function(){
+        return `${window._CONFIG['domianURL']}/${this.url.importExcelUrl}`;
+      }
+    },
     methods: {
-
+      initDictConfig(){
+        initDictOptions('tenancy_type').then((res) => {
+          if (res.success) {
+            this.$set(this.dictOptions, 'tenancyType', res.result)
+          }
+        })
+      }
+       
     }
   }
 </script>

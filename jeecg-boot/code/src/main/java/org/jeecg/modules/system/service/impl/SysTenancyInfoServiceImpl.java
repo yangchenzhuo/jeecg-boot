@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 /**
- * @Description: Sys Tenancy Info
+ * @Description: 系统租户表
  * @Author: jeecg-boot
- * @Date:   2020-02-24
+ * @Date:   2020-02-25
  * @Version: V1.0
  */
 @Service

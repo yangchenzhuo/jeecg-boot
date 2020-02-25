@@ -123,7 +123,8 @@ ALTER TABLE `jeecg-boot`.`sys_data_log` ADD INDEX `index_sys_data_log_tenancy_id
 -- Table sys_log
 -- 新增 tenancyId 租户字段 & 创建索引
 -- ----------------------------
-ALTER TABLE `sys_log` ADD `tenancy_id` VARCHAR(128) NOT NULL COMMENT '租户id';
+
+ALTER TABLE `sys_log` ADD `tenancy_id` VARCHAR(128) DEFAULT NULL COMMENT '租户id';
 ALTER TABLE `jeecg-boot`.`sys_log` ADD INDEX `index_sys_log_tenancy_id` (`tenancy_id`) USING BTREE;
 -- ----------------------------
 -- Table 创建租户表 sys_tenancy_info

@@ -3,6 +3,7 @@ package org.jeecg.modules.system.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -10,41 +11,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.system.entity.SysTenancyInfo;
 import org.jeecg.modules.system.service.ISysTenancyInfoService;
-import java.util.Date;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.jeecg.common.system.base.controller.JeecgController;
+
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
+import org.jeecg.common.system.base.controller.JeecgController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
  /**
- * @Description: Sys Tenancy Info
+ * @Description: 系统租户表
  * @Author: jeecg-boot
- * @Date:   2020-02-24
+ * @Date:   2020-02-25
  * @Version: V1.0
  */
-@Slf4j
-@Api(tags="Sys Tenancy Info")
 @RestController
-@RequestMapping("/sys/tenancy")
+@RequestMapping("/system/sysTenancyInfo")
+@Slf4j
 public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, ISysTenancyInfoService> {
 	@Autowired
 	private ISysTenancyInfoService sysTenancyInfoService;
@@ -58,8 +55,6 @@ public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, IS
 	 * @param req
 	 * @return
 	 */
-	@AutoLog(value = "Sys Tenancy Info-分页列表查询")
-	@ApiOperation(value="Sys Tenancy Info-分页列表查询", notes="Sys Tenancy Info-分页列表查询")
 	@GetMapping(value = "/list")
 	public Result<?> queryPageList(SysTenancyInfo sysTenancyInfo,
 								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
@@ -72,13 +67,11 @@ public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, IS
 	}
 	
 	/**
-	 * 添加
+	 *   添加
 	 *
 	 * @param sysTenancyInfo
 	 * @return
 	 */
-	@AutoLog(value = "Sys Tenancy Info-添加")
-	@ApiOperation(value="Sys Tenancy Info-添加", notes="Sys Tenancy Info-添加")
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody SysTenancyInfo sysTenancyInfo) {
 		sysTenancyInfoService.save(sysTenancyInfo);
@@ -86,13 +79,11 @@ public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, IS
 	}
 	
 	/**
-	 * 编辑
+	 *  编辑
 	 *
 	 * @param sysTenancyInfo
 	 * @return
 	 */
-	@AutoLog(value = "Sys Tenancy Info-编辑")
-	@ApiOperation(value="Sys Tenancy Info-编辑", notes="Sys Tenancy Info-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody SysTenancyInfo sysTenancyInfo) {
 		sysTenancyInfoService.updateById(sysTenancyInfo);
@@ -100,13 +91,11 @@ public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, IS
 	}
 	
 	/**
-	 * 通过id删除
+	 *   通过id删除
 	 *
 	 * @param id
 	 * @return
 	 */
-	@AutoLog(value = "Sys Tenancy Info-通过id删除")
-	@ApiOperation(value="Sys Tenancy Info-通过id删除", notes="Sys Tenancy Info-通过id删除")
 	@DeleteMapping(value = "/delete")
 	public Result<?> delete(@RequestParam(name="id",required=true) String id) {
 		sysTenancyInfoService.removeById(id);
@@ -114,17 +103,15 @@ public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, IS
 	}
 	
 	/**
-	 * 批量删除
+	 *  批量删除
 	 *
 	 * @param ids
 	 * @return
 	 */
-	@AutoLog(value = "Sys Tenancy Info-批量删除")
-	@ApiOperation(value="Sys Tenancy Info-批量删除", notes="Sys Tenancy Info-批量删除")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<?> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
 		this.sysTenancyInfoService.removeByIds(Arrays.asList(ids.split(",")));
-		return Result.ok("批量删除成功！");
+		return Result.ok("批量删除成功!");
 	}
 	
 	/**
@@ -133,35 +120,36 @@ public class SysTenancyInfoController extends JeecgController<SysTenancyInfo, IS
 	 * @param id
 	 * @return
 	 */
-	@AutoLog(value = "Sys Tenancy Info-通过id查询")
-	@ApiOperation(value="Sys Tenancy Info-通过id查询", notes="Sys Tenancy Info-通过id查询")
 	@GetMapping(value = "/queryById")
 	public Result<?> queryById(@RequestParam(name="id",required=true) String id) {
 		SysTenancyInfo sysTenancyInfo = sysTenancyInfoService.getById(id);
+		if(sysTenancyInfo==null) {
+			return Result.error("未找到对应数据");
+		}
 		return Result.ok(sysTenancyInfo);
 	}
 
-  /**
-   * 导出excel
-   *
-   * @param request
-   * @param sysTenancyInfo
-   */
-  @RequestMapping(value = "/exportXls")
-  public ModelAndView exportXls(HttpServletRequest request, SysTenancyInfo sysTenancyInfo) {
-      return super.exportXls(request, sysTenancyInfo, SysTenancyInfo.class, "Sys Tenancy Info");
-  }
+    /**
+    * 导出excel
+    *
+    * @param request
+    * @param sysTenancyInfo
+    */
+    @RequestMapping(value = "/exportXls")
+    public ModelAndView exportXls(HttpServletRequest request, SysTenancyInfo sysTenancyInfo) {
+        return super.exportXls(request, sysTenancyInfo, SysTenancyInfo.class, "系统租户表");
+    }
 
-  /**
-   * 通过excel导入数据
-   *
-   * @param request
-   * @param response
-   * @return
-   */
-  @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-  public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-      return super.importExcel(request, response, SysTenancyInfo.class);
-  }
+    /**
+      * 通过excel导入数据
+    *
+    * @param request
+    * @param response
+    * @return
+    */
+    @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
+    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+        return super.importExcel(request, response, SysTenancyInfo.class);
+    }
 
 }
